@@ -30,11 +30,13 @@ $gutters: (
 );
 
 %gutter-padding{
-    padding-left: $grid-gutter-width * 0.5;
-    padding-right: $grid-gutter-width * 0.5;
+    padding-left: calc(var(--grid-gutter-x) * 0.5);
+    padding-right:calc(var(--grid-gutter-x) * 0.5);
 }
 
 .container-fluid{
+    --grid-gutter-x: #{$grid-gutter-width};
+    --grid-gutter-y: 0;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -48,13 +50,18 @@ $gutters: (
 .row{
     display: flex;
     flex-wrap: wrap;
-    margin-left: -$grid-gutter-width * 0.5;
-    margin-right: -$grid-gutter-width * 0.5;
+    margin-top: calc(var(--grid-gutter-y) * -1);
+    margin-left: calc(var(--grid-gutter-x) * 0.5 * -1);
+    margin-right: calc(var(--grid-gutter-x) * 0.5 * -1);
 
     &[class*=row-cols-] > *,
     [class*=col-]{
         flex: 0 0 auto;
         @extend %gutter-padding;
+    }
+
+    > * {
+        margin-top: var(--grid-gutter-y);
     }
 }
 
@@ -98,6 +105,23 @@ $gutters: (
     }
 }
 
+
+@mixin make-gutters($infix){
+    @each $i, $ratio in $gutters {
+
+        .g#{$infix}-#{$i},
+        .gx#{$infix}-#{$i} {
+            --grid-gutter-x: #{$grid-gutter-width * $ratio};
+        }
+        .g#{$infix}-#{$i},
+        .gy#{$infix}-#{$i} {
+            --grid-gutter-y: #{$grid-gutter-width * $ratio};
+        }
+    }
+}
+
+
+
 @each $size, $breakpoints in $grid-breakpoints{
 
     $max-width: map-get($container-max-widths, $size);
@@ -114,7 +138,7 @@ $gutters: (
 
         @include make-offset($infix);
 
-
+        @include make-gutters($infix);
         
 
         
