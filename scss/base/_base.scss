@@ -1,0 +1,94 @@
+@use "sass:math";
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px
+);
+
+$grid-gutter-width: 30px;
+$grid-column: 12;
+
+$gutters: (
+  0: 0,
+  1: 0.25,
+  2: 0.5,
+  3: 1,
+  4: 1.5,
+  5: 3,
+);
+
+%gutter-padding{
+    padding-left: $grid-gutter-width * 0.5;
+    padding-right: $grid-gutter-width * 0.5;
+}
+
+.container-fluid{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    @extend %gutter-padding
+}
+
+.container{
+    @extend .container-fluid
+}
+
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -$grid-gutter-width * 0.5;
+    margin-right: -$grid-gutter-width * 0.5;
+
+    [class*=col-]{
+        flex: 0 0 auto;
+        @extend %gutter-padding;
+    }
+}
+
+.col{
+    flex: 1 0;
+    @extend %gutter-padding;
+}
+
+@mixin make-media-query($breakpoints, $bypass: false) {
+    @if $bypass {
+        @content;
+    } @else { 
+        @media (min-width:$breakpoints) {
+            @content;
+    }
+    }
+    
+}
+
+
+@each $size, $breakpoints in $grid-breakpoints{
+
+    $max-width: map-get($container-max-widths, $size);
+    $infix: if($size == xs, "", "-#{$size}");
+
+    @include make-media-query($breakpoints, $size == xs){
+        .container{
+            max-width: $max-width;
+        }
+
+        @for $i from 1 through $grid-column {
+            .col#{$infix}-#{$i} {
+                width: math.div(100%, $grid-column) * $i;
+            }
+        }
+    }
+}
+
