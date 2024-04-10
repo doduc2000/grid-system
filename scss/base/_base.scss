@@ -17,7 +17,7 @@ $container-max-widths: (
   xxl: 1320px
 );
 
-$grid-gutter-width: 30px;
+$grid-gutter-width: 30px !default;
 $grid-column: 12;
 
 $gutters: (
@@ -54,20 +54,15 @@ $gutters: (
     margin-left: calc(var(--grid-gutter-x) * 0.5 * -1);
     margin-right: calc(var(--grid-gutter-x) * 0.5 * -1);
 
-    &[class*=row-cols-] > *,
-    [class*=col-]{
-        flex: 0 0 auto;
-        @extend %gutter-padding;
-    }
 
     > * {
         margin-top: var(--grid-gutter-y);
+        @extend %gutter-padding;
     }
 }
 
 .col{
     flex: 1 0;
-    @extend %gutter-padding;
 }
 
 @mixin make-media-query($breakpoints, $bypass: false) {
@@ -84,6 +79,7 @@ $gutters: (
 @mixin make-col($infix) {
     @for $i from 1 through $grid-column {
         .col#{$infix}-#{$i} {
+            flex: 0 0 auto;
             width: math.div(100%, $grid-column) * $i;
         }
     }
@@ -92,6 +88,7 @@ $gutters: (
 @mixin make-row-cols($infix) {
     @for $i from 1 through $grid-column * 0.5 {
         .row-cols#{$infix}-#{$i} > *{
+            flex: 0 0 auto;
             width: math.div(100%, $i);
         }
     }
@@ -139,10 +136,6 @@ $gutters: (
         @include make-offset($infix);
 
         @include make-gutters($infix);
-        
-
-        
-
 
     }
 }
